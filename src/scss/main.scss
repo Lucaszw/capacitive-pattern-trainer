@@ -1,0 +1,12 @@
+@import "~bootstrap/scss/bootstrap.scss";
+@import '~remixicon/fonts/remixicon.css';
+
+$break-small: 538px;
+$break-large: 1200px;
+$navbar-bleed: 30px;
+
+body {
+  background: white;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
