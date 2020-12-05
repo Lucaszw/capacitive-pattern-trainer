@@ -5,8 +5,27 @@ $break-small: 538px;
 $break-large: 1200px;
 $navbar-bleed: 30px;
 
-body {
+html, body {
   background: white;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+
+  * {
+    touch-action: none;
+  }
+}
+
+.touch-area {
+  background-color: lightgray;
+  position: relative;
+  touch-action: none;
+}
+
+.reset-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
 }
