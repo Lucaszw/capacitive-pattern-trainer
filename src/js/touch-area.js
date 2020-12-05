@@ -1,16 +1,24 @@
 import { el, mount } from "redom";
 
 import randomColor from "./utils/random-color";
+import buttonsHTML from "../html/buttons.html";
 
 class TouchArea {
   constructor() {}
 
   draw() {
     this.createCanvas();
-    this.resetButton = el(".btn.btn-primary.reset-button", {}, "reset");
-    mount(document.body, this.resetButton);
+
+    this.buttons = el("div", {innerHTML: buttonsHTML}).children[0];
+    mount(document.body, this.buttons);
+
+
+    this.buttons.reset = this.buttons.querySelector("#reset-button");
+    this.buttons.settings = this.buttons.querySelector("#settings-button");
+    this.buttons.record = this.buttons.querySelector("#record-button");
+
     this.drawCircle();
-    this.resetButton.onclick = this.clearCanvas.bind(this);
+    this.buttons.reset.onclick = this.clearCanvas.bind(this);
   }
 
   createCanvas() {
