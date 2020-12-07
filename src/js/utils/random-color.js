@@ -11,9 +11,9 @@ let randomColor = () => {
     return color;
 }
 
-let update = _.debounce(()=>{
+let update = () => {
     color = randomColor();
-}, 500);
+};
 
 let get = () => {
   return color;
