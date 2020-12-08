@@ -1,5 +1,4 @@
 import { el, mount } from "redom";
-import BSN from "bootstrap.native/dist/bootstrap-native.esm.min.js";
 import _ from "lodash";
 import randInt from "random-int";
 import randomColor from "./utils/random-color";
@@ -11,9 +10,8 @@ let recordHTML = `
 `;
 
 class Recorder {
-    constructor(gestures) {
+    constructor() {
         this.state = "stopped";
-        this.gestures = gestures;
         this.newData = [];
     }
     draw() {
@@ -39,9 +37,16 @@ class Recorder {
 
     start(gestures) {
         this.newData = [];
+        this.oldData = {};
+
         this.container.style.display = "block";
         this.state = "running";
         this._gestures = gestures;
+
+        _.each(this._gestures, (gesture, name) => {
+            this.oldData[name] = JSON.parse(localStorage.getItem(`data-${name}`) || '[]');
+        });
+
         this.changeGesture();
     }
 
@@ -49,7 +54,13 @@ class Recorder {
         this.container.querySelector(".current-card").innerHTML = "";
         this.container.style.display = "none";
         this.state = "stopped";
-        alert(this.newData.length);
+
+        _.each(this.oldData, (entry, name) => {
+            for (let item of this.newData) {
+                this.oldData[item.name].push(item.touches);
+            }
+            localStorage.setItem(`data-${name}`, JSON.stringify(this.oldData[name]))
+        });
     }
 
     toggle(gestures) {

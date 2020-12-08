@@ -55,6 +55,14 @@ html, body {
   margin: 10px 5px;
   padding: 5px 5px;
   border: 1px solid #f7f7f7;
+  cursor: pointer;
+  > * {
+    cursor: auto;
+  }
+
+  dd, dt {
+    cursor: pointer;
+  }
 }
 
 .record-banner {
@@ -64,4 +72,13 @@ html, body {
   height: 20px;
   background-color: lightgreen;
   display: none;
+}
+
+#settingsModal {
+  .touch-container {
+    width: 200px;
+    height: 100px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+  }
 }

@@ -1,6 +1,9 @@
 import { el, mount } from "redom";
 import BSN from "bootstrap.native/dist/bootstrap-native.esm.min.js";
 import _ from "lodash";
+import randomColor from "./utils/random-color";
+
+import TouchArea from "./touch-area";
 
 const modalHTML = `
 <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalTitle" aria-hidden="true">
@@ -38,9 +41,19 @@ class Gestures {
   constructor() {
       let prevGestures = JSON.parse(localStorage.getItem("gestures") || "{}");
       this.gestures = prevGestures;
+      this.modal = null;
   }
 
-  draw() {
+  updateCount() {
+    _.each(this.gestures, (gesture, name) => {
+      let data = JSON.parse(localStorage.getItem(`data-${name}`) || '[]');
+      gesture.querySelector(".entry-count").innerHTML = data.length;
+    });
+  }
+
+  draw(options) {
+    this.remove();
+
     this.container = el("div", {innerHTML: modalHTML}).children[0];
     mount(document.body, this.container);
     this.modal = new BSN.Modal('#settingsModal', { backdrop: true });
@@ -50,16 +63,23 @@ class Gestures {
         this.addGesture(name);
     });
     
+    this.updateCount();
   }
 
+  remove() {
+    if (this.container) this.container.remove();
+  }
   show() {
     this.modal.show();
+    this.updateCount();
   }
 
   addGesture(name) {
     let gesture = this.gestures[name] = el("div", {innerHTML: newGestureHTML}).children[0];
     mount(this.container.querySelector(".modal-body"), gesture);
     gesture.querySelector("dt").innerHTML = name;
+    gesture.onclick = this.toggleGesture.bind(this, gesture);
+    gesture.name = name;
     this.save();
   }
 
@@ -68,10 +88,47 @@ class Gestures {
     this.addGesture(name);
   }
 
+  expandGesture(gesture) {
+    gesture._expanded = true;
+    let data = JSON.parse(localStorage.getItem(`data-${gesture.name}`) || '[]');
+
+    gesture._touchAreas = [];
+    for (let touches of data) {
+      let touchArea = new TouchArea({
+        parent: el(".touch-container"),
+        avoidListeners: true
+      });
+      mount(gesture, touchArea.parent);
+      let bbox = touchArea.parent.getBoundingClientRect();
+
+      touchArea.draw({width: bbox.width, height: bbox.height});
+
+      let scaleX = bbox.width/window.innerWidth;
+      let scaleY = bbox.height/window.innerHeight;
+
+      randomColor.update();
+      for (let touch of touches) {
+        touchArea.drawCircle(touch.pageX*scaleX, touch.pageY*scaleY, 10);
+      }
+      console.log({touches});
+    }
+  }
+
+  collapseGesture(gesture) {
+    gesture._expanded = false;
+    for (let container of gesture.querySelectorAll(".touch-container")) {
+      container.remove();
+    }
+  }
+
+  toggleGesture(gesture) {
+    if (gesture._expanded) this.collapseGesture(gesture);
+    else if (!gesture._expanded) this.expandGesture(gesture);
+  }
+
   save() {
-      localStorage.setItem("gestures", JSON.stringify(this.gestures));
+    localStorage.setItem("gestures", JSON.stringify(this.gestures));
   }
 
 }
-
 export default Gestures;

@@ -3,23 +3,29 @@ import _ from "lodash";
 import randomColor from "./utils/random-color";
 
 class TouchArea {
-  constructor() {
+  constructor(options={}) {
     this.ontouchcomplete = () => {throw "Not implemented";}
-    this.touchdelay = 500;
+    
+    this.touchdelay = options?.touchdelay || 500;
+    this.parent = options?.parent || document.body;
+    this.avoidListeners = options?.avoidListeners || false;
+
     this.clearOnNext = false;
     this.completeTouch = _.debounce(() =>{this._completeTouch()}, this.touchdelay);
   }
 
-  draw() {
-    this.createCanvas();
+  draw(options={}) {
+    this.createCanvas(options);
   }
 
-  createCanvas() {
-    let width = window.innerWidth,
-      height = window.innerHeight;
-
+  createCanvas(options={}) {
+    let width = options?.width || window.innerWidth;
+    let height = options?.height || window.innerHeight;
+    
     let c = (this.container = el("canvas.touch-area", { width, height }));
-    mount(document.body, this.container);
+    mount(this.parent, this.container);
+
+    if (this.avoidListeners) return;
 
     c.addEventListener("touchstart", this.handleStart.bind(this), false);
     c.addEventListener("touchend", this.handleEnd.bind(this), false);
@@ -58,7 +64,7 @@ class TouchArea {
     let touches = e.changedTouches;
     for (let touch of touches) {
       this._touches.push(touch);
-      this.drawCircle(touch.pageX, touch.pageY, touch.radiusX);
+      this.drawCircle(touch.pageX, touch.pageY, 20);
     }
     this.completeTouch();
   }
@@ -81,8 +87,7 @@ class TouchArea {
   drawCircle(x, y, r) {
     x = x || window.innerWidth / 2;
     y = y || window.innerHeight / 2;
-    // r = r || 50;
-    r = 20;
+    r = r || 20;
     const ctx = this.container.getContext("2d");
     ctx.beginPath();
     ctx.arc(x, y, r, 0, 2 * Math.PI);

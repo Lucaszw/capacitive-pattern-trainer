@@ -25,10 +25,12 @@ function drawButtons() {
 
 function main() {
     scrollLock.enable();
+
+    let buttons = drawButtons();
+
     let touchArea = new TouchArea();
     let gestures = new Gestures();
     let recorder = new Recorder();
-    let buttons = drawButtons();
 
     touchArea.draw();
     gestures.draw();
