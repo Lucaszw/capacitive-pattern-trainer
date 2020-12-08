@@ -92,14 +92,22 @@ class Gestures {
     gesture._expanded = true;
     let data = JSON.parse(localStorage.getItem(`data-${gesture.name}`) || '[]');
 
-    gesture._touchAreas = [];
-    for (let touches of data) {
+    _.each(data, (touches, index) => {
       let touchArea = new TouchArea({
         parent: el(".touch-container"),
         avoidListeners: true
       });
       mount(gesture, touchArea.parent);
       let bbox = touchArea.parent.getBoundingClientRect();
+
+      touchArea.parent.onclick = (e) => {
+        e.stopPropagation();
+        data.splice(index, 1);
+        localStorage.setItem(`data-${gesture.name}`, JSON.stringify(data));
+        touchArea.remove();
+        touchArea.parent.remove();
+        this.updateCount();
+      }
 
       touchArea.draw({width: bbox.width, height: bbox.height});
 
@@ -110,8 +118,7 @@ class Gestures {
       for (let touch of touches) {
         touchArea.drawCircle(touch.pageX*scaleX, touch.pageY*scaleY, 10);
       }
-      console.log({touches});
-    }
+    });
   }
 
   collapseGesture(gesture) {

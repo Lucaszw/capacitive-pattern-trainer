@@ -18,6 +18,10 @@ class TouchArea {
     this.createCanvas(options);
   }
 
+  remove() {
+    if (this.container) this.container.remove();
+  }
+
   createCanvas(options={}) {
     let width = options?.width || window.innerWidth;
     let height = options?.height || window.innerHeight;
