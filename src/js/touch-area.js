@@ -55,7 +55,8 @@ class TouchArea {
     e.touches = [touch];
     this.handleStart({
       changedTouches: [touch],
-      preventDefault: _.noop
+      preventDefault: _.noop,
+      target: e.target
     });
   }
 
@@ -66,8 +67,13 @@ class TouchArea {
     this._touches = this._touches || [];
 
     let touches = e.changedTouches;
+    console.log(e);
     for (let touch of touches) {
-      this._touches.push({x: touch.pageX, y: touch.pageY, r: touch.radiusX});
+      this._touches.push({
+        x: touch.pageX/e.target.width, 
+        y: touch.pageY/e.target.height,
+        r: touch.radiusX
+      });
       this.drawCircle(touch.pageX, touch.pageY, 20);
     }
     this.completeTouch();

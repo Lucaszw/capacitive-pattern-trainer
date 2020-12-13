@@ -150,12 +150,9 @@ class Gestures {
 
       touchArea.draw({ width: bbox.width, height: bbox.height });
 
-      let scaleX = bbox.width / window.innerWidth;
-      let scaleY = bbox.height / window.innerHeight;
-
       randomColor.update();
       for (let touch of touches) {
-        touchArea.drawCircle(touch.x * scaleX, touch.y * scaleY, 10);
+        touchArea.drawCircle(touch.x * bbox.width, touch.y * bbox.width, 5);
       }
     }
   }
