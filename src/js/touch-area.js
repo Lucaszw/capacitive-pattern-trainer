@@ -49,9 +49,9 @@ class TouchArea {
   handleClick(e) {
     e.preventDefault();
     let touch = {};
-    touch.pageX = e.pageX;
-    touch.pageY = e.pageY;
-    touch.radiusX = 20;
+    touch.pageX = touch.x = e.pageX;
+    touch.pageY = touch.y = e.pageY;
+    touch.radiusX = touch.r = 20;
     e.touches = [touch];
     this.handleStart({
       changedTouches: [touch],
@@ -67,7 +67,7 @@ class TouchArea {
 
     let touches = e.changedTouches;
     for (let touch of touches) {
-      this._touches.push(touch);
+      this._touches.push({x: touch.pageX, y: touch.pageY, r: touch.radiusX});
       this.drawCircle(touch.pageX, touch.pageY, 20);
     }
     this.completeTouch();

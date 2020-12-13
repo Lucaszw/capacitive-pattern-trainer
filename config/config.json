@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "zeer",
+    "password": "",
+    "database": "capacitive",
+    "host": "localhost",
+    "dialect": "postgres"
+  }
+}

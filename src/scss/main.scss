@@ -63,6 +63,28 @@ html, body {
   dd, dt {
     cursor: pointer;
   }
+
+  &:not(.expanded) {
+    .close-btn {
+      content: " ✕ ";
+      color: white;
+      width: 10%;
+      position: absolute;
+      right: 0px;
+      height: 100%;
+      top: 0px;
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+      text-align: center;
+      font-size: 30px;
+      padding-top: 10px;
+      max-height: 100%;
+      
+    }
+  }
+  &.expanded { 
+    .close-btn {display: none;}
+  }
 }
 
 .record-banner {

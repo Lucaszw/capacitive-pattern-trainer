@@ -2,6 +2,7 @@ import { el, mount } from "redom";
 import _ from "lodash";
 import randInt from "random-int";
 import randomColor from "./utils/random-color";
+import API from "./api";
 
 let recordHTML = `
     <div class="record-banner">
@@ -20,7 +21,7 @@ class Recorder {
     }
 
     changeGesture() {
-        let gestureNames = _.keys(this._gestures);
+        let gestureNames = _.map(this._gestures, "name");
         let index = randInt(0, gestureNames.length-1);
 
         this.lastGesture = gestureNames[index]
@@ -37,30 +38,23 @@ class Recorder {
 
     start(gestures) {
         this.newData = [];
-        this.oldData = {};
 
         this.container.style.display = "block";
         this.state = "running";
         this._gestures = gestures;
 
-        _.each(this._gestures, (gesture, name) => {
-            this.oldData[name] = JSON.parse(localStorage.getItem(`data-${name}`) || '[]');
-        });
-
         this.changeGesture();
     }
 
-    stop() {
+    async stop() {
         this.container.querySelector(".current-card").innerHTML = "";
         this.container.style.display = "none";
         this.state = "stopped";
-
-        _.each(this.oldData, (entry, name) => {
-            for (let item of this.newData) {
-                this.oldData[item.name].push(item.touches);
-            }
-            localStorage.setItem(`data-${name}`, JSON.stringify(this.oldData[name]))
-        });
+        
+        for (let item of this.newData) {
+            let cardId = _.find(this._gestures, {name: item.name}).id;
+            await API.cards.samples(cardId).create(item.touches);
+        }
     }
 
     toggle(gestures) {
